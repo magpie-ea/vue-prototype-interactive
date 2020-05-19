@@ -11,7 +11,7 @@ export default function install(Vue, { socketURL, experimentID }) {
     chain: null,
     realization: null,
     participantId: null,
-    socketConnectionEstablished: false,
+    experimentAvailable: false,
     /* Helper functions */
     showErrorMessageOnSocketError(reasons) {
       window.alert(
@@ -63,7 +63,7 @@ export default function install(Vue, { socketURL, experimentID }) {
 
       // First join the participant channel belonging only to this participant.
       this.participantChannel = this.experimentSocket.channel(
-        `participant:${this.participant_id}`,
+        `participant:${this.participantID}`,
         {}
       );
 
@@ -71,7 +71,7 @@ export default function install(Vue, { socketURL, experimentID }) {
         this.variant = payload.variant;
         this.chain = payload.chain;
         this.realization = payload.realization;
-        this.socketConnectionEstablished = true;
+        this.experimentAvailable = true;
       });
 
       this.participantChannel

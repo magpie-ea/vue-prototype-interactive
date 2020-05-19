@@ -1,6 +1,6 @@
 <template>
   <Experiment id="app">
-    <div>Mouse tracking experiment</div>
+    <div>Interactive experiment</div>
     <template #0="{ nextScreen }">
       <Screen :title="'Welcome'">
         <template #0>
@@ -14,8 +14,8 @@
       <InteractiveWelcome></InteractiveWelcome>
     </template>
 
-    <template #2>
-      <Screen :title="Test">
+    <template #2="{nextScreen}">
+      <Screen title="Test">
         <template #0>
           Test
           <button @click="nextScreen">Testtesttest</button>

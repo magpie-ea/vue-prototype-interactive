@@ -1,5 +1,9 @@
 <template>
-  <Screen title="Welcome to the interactive experiment"> </Screen>
+  <Screen title="Welcome to the interactive experiment">
+    <template #0>
+      Welcome to the interactive experiment
+    </template>
+  </Screen>
 </template>
 
 <script>
@@ -10,16 +14,20 @@ export default {
   components: { Screen },
   data() {
     return {
-      socketConnectionEstablished: this.$interactiveExperiment
-        .socketConnectionEstablished
+      experimentAvailable: this.$interactiveExperiment.experimentAvailable
     };
   },
   inject: ['nextScreen'],
   watch: {
-    socketConnectionEstablished: function(value) {
+    experimentAvailable: function(value) {
       if (value === true) {
         this.nextScreen();
       }
+    }
+  },
+  mounted() {
+    if (this.experimentAvailable) {
+      this.nextScreen();
     }
   }
 };
