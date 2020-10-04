@@ -44,32 +44,18 @@ export const mutations = {
       `participant:${state.participantID}`,
       {}
     );
-
-    state.participantChannel.on('experiment_available', payload => {
-      state.variant = payload.variant;
-      state.chain = payload.chain;
-      state.realization = payload.realization;
-      state.experimentAvailable = true;
-    });
-
-    state.participantChannel
-      .join()
-      // Note that `receive` functions are for receiving a *reply* from the server after you try to send it something, e.g. `join()` or `push()`.
-      // While `on` function is for passively listening for new messages initiated by the server.
-      // We still need to wait for the actual confirmation message of "experiment_available". So we do nothing here.
-      .receive('ok', () => {})
-      .receive('error', reasons => {
-        showErrorMessageOnSocketError(reasons);
-      })
-      .receive('timeout', () => {
-        showErrorMessageOnSocketTimeout();
-      });
   },
   setExperimentSocket(state, experimentSocket) {
     state.interactiveExperiment.experimentSocket = experimentSocket;
   },
   setParticipantChannel(state, participantChannel) {
     state.interactiveExperiment.participantChannel = participantChannel;
+  },
+  onExperimentAvailable(state, payload) {
+    state.variant = payload.variant;
+    state.chain = payload.chain;
+    state.realization = payload.realization;
+    state.experimentAvailable = true;
   },
   setGameChannel(state, gameChannel) {
     state.interactiveExperiment['gameChannel'] = gameChannel;
@@ -82,11 +68,34 @@ export const mutations = {
 };
 
 export const actions = {
-  initializeSocket({ commit }, { socketURL, experimentID }) {
-    commit(('initializeSocket', { socketURL, experimentID }));
-  },
-  initializeExperiment({ commit }) {
+  // initializeSocket({ commit }, { socketURL, experimentID }) {
+  // },
+  initializeExperiment({ commit, rootState, state }) {
+    const socketURL = rootState.config.socketURL;
+    const experimentID = rootState.config.experimentID;
+    commit('initializeSocket', { socketURL, experimentID });
     commit('initializeExperiment');
+    state.participantChannel.on('experiment_available', payload => {
+      console.log('asdf');
+      commit('onExperimentAvailable', payload);
+    });
+
+    console.log('qwer');
+
+    state.participantChannel
+      .join()
+      // Note that `receive` functions are for receiving a *reply* from the server after you try to send it something, e.g. `join()` or `push()`.
+      // While `on` function is for passively listening for new messages initiated by the server.
+      // We still need to wait for the actual confirmation message of "experiment_available". So we do nothing here.
+      .receive('ok', () => {
+        window.alert('asdfasdf');
+      })
+      .receive('error', reasons => {
+        showErrorMessageOnSocketError(reasons);
+      })
+      .receive('timeout', () => {
+        showErrorMessageOnSocketTimeout();
+      });
   },
   // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
   setGameChannel({ commit }, { gameChannel }) {
