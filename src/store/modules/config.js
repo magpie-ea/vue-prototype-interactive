@@ -1,3 +1,5 @@
+export const namespaced = true;
+
 export const state = {
   experimentID: '171',
   serverAppURL: 'https://magpie-demo.herokuapp.com/api/submit_experiment/',
