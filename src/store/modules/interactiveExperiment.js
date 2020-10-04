@@ -68,28 +68,22 @@ export const mutations = {
 };
 
 export const actions = {
-  // initializeSocket({ commit }, { socketURL, experimentID }) {
-  // },
   initializeExperiment({ commit, rootState, state }) {
     const socketURL = rootState.config.socketURL;
     const experimentID = rootState.config.experimentID;
     commit('initializeSocket', { socketURL, experimentID });
     commit('initializeExperiment');
     state.participantChannel.on('experiment_available', payload => {
-      console.log('asdf');
+      // Need to use a commit to perform a mutation since we're modifying the state
       commit('onExperimentAvailable', payload);
     });
-
-    console.log('qwer');
 
     state.participantChannel
       .join()
       // Note that `receive` functions are for receiving a *reply* from the server after you try to send it something, e.g. `join()` or `push()`.
       // While `on` function is for passively listening for new messages initiated by the server.
       // We still need to wait for the actual confirmation message of "experiment_available". So we do nothing here.
-      .receive('ok', () => {
-        window.alert('asdfasdf');
-      })
+      .receive('ok', () => {})
       .receive('error', reasons => {
         showErrorMessageOnSocketError(reasons);
       })
@@ -113,6 +107,9 @@ export const getters = {
   participantChannel: function(state) {
     return state.participantChannel;
   }
+  // experimentAvailable: function(state) {
+  //   return state.experimentAvailable;
+  // }
 };
 
 /* Helper functions */
