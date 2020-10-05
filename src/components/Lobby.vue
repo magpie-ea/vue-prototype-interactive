@@ -4,8 +4,6 @@
 
 <script>
 import Screen from './Screen';
-// import Vue from './Vue';
-// import store from '../store';
 
 export default {
   name: 'Lobby',
