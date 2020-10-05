@@ -18,7 +18,7 @@ export const state = {
 };
 
 export const mutations = {
-  initializeSocket(state, { socketURL, experimentID }) {
+  INITIALIZE_SOCKET(state, { socketURL, experimentID }) {
     state.participantID = generateId(40);
 
     state.socketURL = socketURL;
@@ -35,7 +35,7 @@ export const mutations = {
       showErrorMessageOnSocketError('The connection to the server was dropped.')
     );
   },
-  initializeExperiment(state) {
+  INITIALIZE_EXPERIMENT(state) {
     // Establish connection with the server.
     state.experimentSocket.connect();
 
@@ -45,26 +45,17 @@ export const mutations = {
       {}
     );
   },
-  setExperimentSocket(state, experimentSocket) {
-    state.interactiveExperiment.experimentSocket = experimentSocket;
-  },
-  setParticipantChannel(state, participantChannel) {
-    state.interactiveExperiment.participantChannel = participantChannel;
-  },
-  onExperimentAvailable(state, payload) {
+  ON_EXPERIMENT_AVAILABLE(state, payload) {
     state.variant = payload.variant;
     state.chain = payload.chain;
     state.realization = payload.realization;
     state.experimentAvailable = true;
   },
-  setGameChannel(state, gameChannel) {
-    state.interactiveExperiment['gameChannel'] = gameChannel;
-  },
-  setInteractiveExperimentTuple(state, { variant, chain, realization }) {
-    state.variant = variant;
-    state.chain = chain;
-    state.realization = realization;
-  },
+  // setInteractiveExperimentTuple(state, { variant, chain, realization }) {
+  //   state.variant = variant;
+  //   state.chain = chain;
+  //   state.realization = realization;
+  // },
   INITIALIZE_GAME_CHANNEL(state) {
     state.gameChannel = state.experimentSocket.channel(
       `interactive_room:${state.experimentID}:${state.chain}:${state.realization}`,
@@ -80,11 +71,11 @@ export const actions = {
   initializeExperiment({ commit, rootState, state }) {
     const socketURL = rootState.config.socketURL;
     const experimentID = rootState.config.experimentID;
-    commit('initializeSocket', { socketURL, experimentID });
-    commit('initializeExperiment');
+    commit('INITIALIZE_SOCKET', { socketURL, experimentID });
+    commit('INITIALIZE_EXPERIMENT');
     state.participantChannel.on('experiment_available', payload => {
       // Need to use a commit to perform a mutation since we're modifying the state
-      commit('onExperimentAvailable', payload);
+      commit('ON_EXPERIMENT_AVAILABLE', payload);
     });
 
     state.participantChannel
@@ -113,7 +104,6 @@ export const actions = {
       .receive('timeout', () => {
         showErrorMessageOnSocketTimeout();
       });
-    // commit('JOIN_LOBBY')
   },
   // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
   setGameChannel({ commit }, { gameChannel }) {
@@ -121,20 +111,7 @@ export const actions = {
   }
 };
 
-export const getters = {
-  interactiveExperiment: function(state) {
-    return state.interactiveExperiment;
-  },
-  experimentSocket: function(state) {
-    return state.experimentSocket;
-  },
-  participantChannel: function(state) {
-    return state.participantChannel;
-  }
-  // experimentAvailable: function(state) {
-  //   return state.experimentAvailable;
-  // }
-};
+export const getters = {};
 
 /* Helper functions */
 const showErrorMessageOnSocketError = function(reasons) {
