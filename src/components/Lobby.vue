@@ -1,5 +1,5 @@
 <template>
-  <Screen title="Connecting to the Server..."> </Screen>
+  <Screen :title="title"> </Screen>
 </template>
 
 <script>
@@ -11,12 +11,22 @@ export default {
   name: 'Lobby',
   components: { Screen },
   inject: ['nextScreen', 'addResult'],
-  props: {},
   data() {
-    return {};
+    return {
+      title: 'Connecting to the Server...'
+    };
   },
-  methods: {},
-  mounted() {}
+  watch: {
+    '$store.state.interactiveExperiment.waitingInLobby': function(value) {
+      if (value === true) {
+        this.title =
+          'Successfully joined the lobby. Waiting for other participants...';
+      }
+    }
+  },
+  mounted() {
+    this.$store.dispatch('interactiveExperiment/joinLobby');
+  }
 };
 </script>
 

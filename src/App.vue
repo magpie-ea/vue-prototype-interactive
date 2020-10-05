@@ -14,7 +14,11 @@
       <InteractiveWelcome></InteractiveWelcome>
     </template>
 
-    <template #2="{nextScreen}">
+    <template #2>
+      <Lobby></Lobby>
+    </template>
+
+    <template #3="{nextScreen}">
       <Screen title="Test">
         <template #0>
           Test
@@ -46,6 +50,7 @@
 <script>
 import Experiment from './components/Experiment';
 import Screen from './components/Screen';
+import Lobby from './components/Lobby';
 // import AudioDiscriminationWithPriming from './components/AudioDiscriminationWithPriming';
 import InteractiveWelcome from './components/InteractiveWelcome';
 import Vue from 'vue';
@@ -56,6 +61,7 @@ export default {
     // AudioDiscriminationWithPriming,
     Screen,
     Experiment,
+    Lobby,
     InteractiveWelcome
   },
   data() {

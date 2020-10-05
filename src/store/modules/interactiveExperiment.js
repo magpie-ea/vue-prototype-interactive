@@ -64,6 +64,15 @@ export const mutations = {
     state.variant = variant;
     state.chain = chain;
     state.realization = realization;
+  },
+  INITIALIZE_GAME_CHANNEL(state) {
+    state.gameChannel = state.experimentSocket.channel(
+      `interactive_room:${state.experimentID}:${state.chain}:${state.realization}`,
+      { participant_id: state.participantID }
+    );
+  },
+  SET_WAITING_IN_LOBBY(state) {
+    state.waitingInLobby = true;
   }
 };
 
@@ -90,6 +99,21 @@ export const actions = {
       .receive('timeout', () => {
         showErrorMessageOnSocketTimeout();
       });
+  },
+  joinLobby({ commit, state }) {
+    commit('INITIALIZE_GAME_CHANNEL');
+    state.gameChannel
+      .join()
+      .receive('ok', () => {
+        commit('SET_WAITING_IN_LOBBY');
+      })
+      .receive('error', reasons => {
+        showErrorMessageOnSocketError(reasons);
+      })
+      .receive('timeout', () => {
+        showErrorMessageOnSocketTimeout();
+      });
+    // commit('JOIN_LOBBY')
   },
   // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
   setGameChannel({ commit }, { gameChannel }) {
