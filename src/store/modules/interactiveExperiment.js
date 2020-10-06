@@ -3,6 +3,7 @@ import { Socket } from 'phoenix';
 export const namespaced = true;
 
 export const state = {
+  // Config related
   socketURL: null,
   experimentSocket: null,
   experimentID: null,
@@ -14,7 +15,9 @@ export const state = {
   participantID: null,
   // Fields to be watched by components
   experimentAvailable: false,
-  waitingInLobby: false
+  waitingInLobby: false,
+  gameStarted: false,
+  gameFinished: false
 };
 
 export const mutations = {
@@ -51,11 +54,6 @@ export const mutations = {
     state.realization = payload.realization;
     state.experimentAvailable = true;
   },
-  // setInteractiveExperimentTuple(state, { variant, chain, realization }) {
-  //   state.variant = variant;
-  //   state.chain = chain;
-  //   state.realization = realization;
-  // },
   INITIALIZE_GAME_CHANNEL(state) {
     state.gameChannel = state.experimentSocket.channel(
       `interactive_room:${state.experimentID}:${state.chain}:${state.realization}`,
@@ -64,6 +62,12 @@ export const mutations = {
   },
   SET_WAITING_IN_LOBBY(state) {
     state.waitingInLobby = true;
+  },
+  SET_GAME_START(state) {
+    state.gameStarted = true;
+  },
+  SEND_MESSAGE_TO_CHANNEL(state, { message, payload }) {
+    state.gameChannel.push(message, payload);
   }
 };
 
@@ -93,6 +97,7 @@ export const actions = {
   },
   joinLobby({ commit, state }) {
     commit('INITIALIZE_GAME_CHANNEL');
+
     state.gameChannel
       .join()
       .receive('ok', () => {
@@ -104,11 +109,15 @@ export const actions = {
       .receive('timeout', () => {
         showErrorMessageOnSocketTimeout();
       });
+
+    state.gameChannel.on('start_game', () => {
+      commit('SET_GAME_START');
+    });
   },
-  // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
-  setGameChannel({ commit }, { gameChannel }) {
-    commit('setGameChannel', gameChannel);
+  sendMessageToChannel({ commit }, { message, payload }) {
+    commit('SEND_MESSAGE_TO_CHANNEL', { message, payload });
   }
+  // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
 };
 
 export const getters = {};

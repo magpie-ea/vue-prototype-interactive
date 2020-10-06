@@ -20,6 +20,11 @@ export default {
         this.title =
           'Successfully joined the lobby. Waiting for other participants...';
       }
+    },
+    '$store.state.interactiveExperiment.gameStarted': function(value) {
+      if (value === true) {
+        this.nextScreen();
+      }
     }
   },
   mounted() {
