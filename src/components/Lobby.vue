@@ -4,6 +4,7 @@
 
 <script>
 import Screen from './Screen';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'Lobby',
@@ -28,7 +29,10 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('interactiveExperiment/joinLobby');
+    this.joinLobby();
+  },
+  methods: {
+    ...mapActions('interactiveExperiment', ['joinLobby'])
   }
 };
 </script>

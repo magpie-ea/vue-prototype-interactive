@@ -8,6 +8,7 @@
 
 <script>
 import Screen from './Screen';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'InteractiveWelcome',
@@ -21,7 +22,10 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('interactiveExperiment/initializeExperiment');
+    this.initializeExperiment();
+  },
+  methods: {
+    ...mapActions('interactiveExperiment', ['initializeExperiment'])
   }
 };
 </script>
