@@ -18,15 +18,19 @@
       <Lobby></Lobby>
     </template>
 
-    <template #3="{nextScreen}">
-      <Screen title="Test">
-        <template #0>
-          Test
-          <button @click="nextScreen">Testtesttest</button>
-        </template>
-      </Screen>
+    <template #3>
+      <ColorReference></ColorReference>
     </template>
 
+    <!-- <template #3="{nextScreen}">
+         <Screen title="Test">
+         <template #0>
+         Test
+         <button @click="nextScreen">Testtesttest</button>
+         </template>
+         </Screen>
+         </template>
+    -->
     <!-- <template #[trial.screen] v-for="trial in audioTrials">
              <AudioDiscriminationWithPriming
              :priming-audio="trial.primingAudio"
@@ -48,6 +52,7 @@
 </template>
 
 <script>
+import ColorReference from './components/ColorReference';
 import Experiment from './components/Experiment';
 import Screen from './components/Screen';
 import Lobby from './components/Lobby';
@@ -59,6 +64,7 @@ export default {
   name: 'App',
   components: {
     // AudioDiscriminationWithPriming,
+    ColorReference,
     Screen,
     Experiment,
     Lobby,
