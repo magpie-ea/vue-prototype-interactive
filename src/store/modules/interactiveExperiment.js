@@ -17,7 +17,11 @@ export const state = {
   experimentAvailable: false,
   waitingInLobby: false,
   gameStarted: false,
-  gameFinished: false
+  gameFinished: false,
+  newMessageUpdate: null,
+  initializeGameUpdate: null,
+  nextRoundUpdate: null,
+  endGameUpdate: null
 };
 
 export const mutations = {
@@ -66,8 +70,20 @@ export const mutations = {
   SET_GAME_START(state) {
     state.gameStarted = true;
   },
-  SEND_MESSAGE_TO_CHANNEL(state, { message, payload }) {
-    state.gameChannel.push(message, payload);
+  BROADCAST_EVENT_TO_CHANNEL(state, { event, payload }) {
+    state.gameChannel.push(event, payload);
+  },
+  SET_INITIALIZE_GAME_UPDATE(state, payload) {
+    state.initializeGameUpdate = payload;
+  },
+  SET_NEW_MESSAGE_UPDATE(state, payload) {
+    state.newMessageUpdate = payload;
+  },
+  SET_NEXT_ROUND_UPDATE(state, payload) {
+    state.nextRoundUpdate = payload;
+  },
+  SET_END_GAME_UPDATE(state, payload) {
+    state.endGameUpdate = payload;
   }
 };
 
@@ -114,8 +130,36 @@ export const actions = {
       commit('SET_GAME_START');
     });
   },
-  sendMessageToChannel({ commit }, { message, payload }) {
-    commit('SEND_MESSAGE_TO_CHANNEL', { message, payload });
+  broadcastInitializeGameEvent({ commit }, payload) {
+    commit('BROADCAST_EVENT_TO_CHANNEL', { event: 'initialize_game', payload });
+  },
+  broadcastNewMessageEvent({ commit }, payload) {
+    commit('BROADCAST_EVENT_TO_CHANNEL', { event: 'new_msg', payload });
+  },
+  broadcastNextRoundEvent({ commit }, payload) {
+    commit('BROADCAST_EVENT_TO_CHANNEL', { event: 'next_round', payload });
+  },
+  broadcastEndGameEvent({ commit }, payload) {
+    commit('BROADCAST_EVENT_TO_CHANNEL', { event: 'end_game', payload });
+  },
+  subscribeToUpdate({ commit }, message) {
+    state.gameChannel.on(message, payload => {
+      commit('SET_UPDATE', payload);
+    });
+  },
+  setUpSubscriptionsToUpdates({ commit }) {
+    state.gameChannel.on('initialize_game', payload => {
+      commit('SET_INITIALIZE_GAME_UPDATE', payload);
+    });
+    state.gameChannel.on('new_msg', payload => {
+      commit('SET_NEW_MSG_UPDATE', payload);
+    });
+    state.gameChannel.on('next_round', payload => {
+      commit('SET_NEXT_ROUND_UPDATE', payload);
+    });
+    state.gameChannel.on('end_game', payload => {
+      commit('SET_END_GAME_UPDATE', payload);
+    });
   }
   // storeInteractiveExpMetaInfo({ commit }, { variant, chain, realization }) {},
 };
