@@ -9,7 +9,6 @@ import { mapActions } from 'vuex';
 export default {
   name: 'Lobby',
   components: { Screen },
-  inject: ['nextScreen', 'addResult'],
   data() {
     return {
       title: 'Connecting to the Server...'
@@ -24,15 +23,18 @@ export default {
     },
     '$store.state.interactiveExperiment.gameStarted': function(value) {
       if (value === true) {
-        this.nextScreen();
+        console.log('true');
       }
     }
   },
-  mounted() {
+  created() {
     this.joinLobby();
   },
   methods: {
-    ...mapActions('interactiveExperiment', ['joinLobby'])
+    ...mapActions('interactiveExperiment', [
+      'joinLobby'
+      // 'initializeExperiment'
+    ])
   }
 };
 </script>

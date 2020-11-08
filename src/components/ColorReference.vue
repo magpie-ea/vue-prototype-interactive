@@ -21,6 +21,7 @@
             class="magpie-view-button"
             @click.stop="broadcastNewMessageEvent({ message: 'test' })"
           >
+            <!-- Up to now the broadcasting seems to work, seeing from the server log -->
             Send
           </button>
         </div>

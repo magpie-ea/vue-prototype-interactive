@@ -1,27 +1,24 @@
 <template>
-  <Screen title="Welcome to the interactive experiment">
-    <template #0>
-      Welcome to the interactive experiment
-    </template>
-  </Screen>
+  <div>
+    Welcome to the interactive experiment
+  </div>
 </template>
 
 <script>
-import Screen from './Screen';
 import { mapActions } from 'vuex';
 
 export default {
   name: 'InteractiveWelcome',
-  components: { Screen },
-  inject: ['nextScreen'],
   watch: {
     '$store.state.interactiveExperiment.experimentAvailable': function(value) {
       if (value === true) {
-        this.nextScreen();
+        this.$router.push({
+          name: 'lobby'
+        });
       }
     }
   },
-  mounted() {
+  created() {
     this.initializeExperiment();
   },
   methods: {
