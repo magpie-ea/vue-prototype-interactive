@@ -1,19 +1,14 @@
 <template>
-  <Screen :title="title"> </Screen>
+  <h1>
+    Connecting to the Server...
+  </h1>
 </template>
 
 <script>
-import Screen from './Screen';
 import { mapActions } from 'vuex';
 
 export default {
   name: 'Lobby',
-  components: { Screen },
-  data() {
-    return {
-      title: 'Connecting to the Server...'
-    };
-  },
   watch: {
     '$store.state.interactiveExperiment.waitingInLobby': function(value) {
       if (value === true) {
@@ -23,7 +18,9 @@ export default {
     },
     '$store.state.interactiveExperiment.gameStarted': function(value) {
       if (value === true) {
-        console.log('true');
+        this.$router.push({
+          name: 'color-reference'
+        });
       }
     }
   },

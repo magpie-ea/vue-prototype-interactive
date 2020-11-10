@@ -7,7 +7,7 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/welcome',
+      path: '/',
       name: 'welcome',
       component: () => import('@/components/InteractiveWelcome.vue')
     },
@@ -17,9 +17,9 @@ const router = new Router({
       component: () => import('@/components/Lobby.vue')
     },
     {
-      path: '/test',
-      name: 'test',
-      component: () => import('@/components/AudioDiscriminationWithPriming.vue')
+      path: '/color-reference',
+      name: 'color-reference',
+      component: () => import('@/components/ColorReference.vue')
     }
   ]
 });
