@@ -1,14 +1,7 @@
-import { Socket } from 'phoenix';
-
 export const namespaced = true;
 
 export const state = {
   // Config related
-  socketURL: null,
-  experimentSocket: null,
-  experimentID: null,
-  participantChannel: null,
-  gameChannel: null,
   variant: null,
   chain: null,
   realization: null,
@@ -25,55 +18,51 @@ export const state = {
 };
 
 export const mutations = {
-  INITIALIZE_SOCKET(state, { socketURL, experimentID }) {
-    state.participantID = generateId(40);
+  // INITIALIZE_SOCKET(state, { socketURL, experimentID }) {
+  // },
+  // INITIALIZE_EXPERIMENT(state, { socketURL, experimentID }) {
+  //   state.experimentSocket = new Socket(socketURL, {
+  //     params: {
+  //       participant_id: state.participantID,
+  //       experiment_id: experimentID
+  //     }
+  //   });
 
-    state.socketURL = socketURL;
-    state.experimentID = experimentID;
+  //   state.experimentSocket.onError(() =>
+  //     showErrorMessageOnSocketError('The connection to the server was dropped.')
+  //   );
 
-    state.experimentSocket = new Socket(socketURL, {
-      params: {
-        participant_id: state.participantID,
-        experiment_id: experimentID
-      }
-    });
+  //   // Establish connection with the server.
+  //   state.experimentSocket.connect();
 
-    state.experimentSocket.onError(() =>
-      showErrorMessageOnSocketError('The connection to the server was dropped.')
-    );
-  },
-  INITIALIZE_EXPERIMENT(state) {
-    // Establish connection with the server.
-    state.experimentSocket.connect();
+  //   // First join the participant channel belonging only to state participant.
+  //   state.participantChannel = state.experimentSocket.channel(
+  //     `participant:${state.participantID}`,
+  //     {}
+  //   );
 
-    // First join the participant channel belonging only to state participant.
-    state.participantChannel = state.experimentSocket.channel(
-      `participant:${state.participantID}`,
-      {}
-    );
+  //   state.participantChannel.on('experiment_available', payload => {
+  //     // Need to use a commit to perform a mutation since we're modifying the state
+  //     this.commit('interactiveExperiment/ON_EXPERIMENT_AVAILABLE', payload);
+  //     // state.variant = payload.variant;
+  //     // state.chain = payload.chain;
+  //     // state.realization = payload.realization;
+  //     // state.experimentAvailable = true;
+  //   });
 
-    state.participantChannel.on('experiment_available', payload => {
-      // Need to use a commit to perform a mutation since we're modifying the state
-      this.commit('interactiveExperiment/ON_EXPERIMENT_AVAILABLE', payload);
-      // state.variant = payload.variant;
-      // state.chain = payload.chain;
-      // state.realization = payload.realization;
-      // state.experimentAvailable = true;
-    });
-
-    state.participantChannel
-      .join()
-      // Note that `receive` functions are for receiving a *reply* from the server after you try to send it something, e.g. `join()` or `push()`.
-      // While `on` function is for passively listening for new messages initiated by the server.
-      // We still need to wait for the actual confirmation message of "experiment_available". So we do nothing here.
-      .receive('ok', () => {})
-      .receive('error', reasons => {
-        showErrorMessageOnSocketError(reasons);
-      })
-      .receive('timeout', () => {
-        showErrorMessageOnSocketTimeout();
-      });
-  },
+  //   state.participantChannel
+  //     .join()
+  //     // Note that `receive` functions are for receiving a *reply* from the server after you try to send it something, e.g. `join()` or `push()`.
+  //     // While `on` function is for passively listening for new messages initiated by the server.
+  //     // We still need to wait for the actual confirmation message of "experiment_available". So we do nothing here.
+  //     .receive('ok', () => {})
+  //     .receive('error', reasons => {
+  //       showErrorMessageOnSocketError(reasons);
+  //     })
+  //     .receive('timeout', () => {
+  //       showErrorMessageOnSocketTimeout();
+  //     });
+  // },
   ON_EXPERIMENT_AVAILABLE(state, payload) {
     state.variant = payload.variant;
     state.chain = payload.chain;
@@ -85,6 +74,9 @@ export const mutations = {
       `interactive_room:${state.experimentID}:${state.chain}:${state.realization}`,
       { participant_id: state.participantID }
     );
+  },
+  SET_EXPERIMENT_AVAILABLE(state) {
+    state.experimentAvailable = true;
   },
   SET_WAITING_IN_LOBBY(state) {
     state.waitingInLobby = true;
@@ -113,8 +105,9 @@ export const actions = {
   initializeExperiment({ commit, rootState }) {
     const socketURL = rootState.config.socketURL;
     const experimentID = rootState.config.experimentID;
-    commit('INITIALIZE_SOCKET', { socketURL, experimentID });
-    commit('INITIALIZE_EXPERIMENT');
+    // commit('INITIALIZE_SOCKET', { socketURL, experimentID });
+    commit('INITIALIZE_EXPERIMENT', { socketURL, experimentID });
+    // commit('INITIALIZE_EXPERIMENT');
   },
   joinLobby({ commit, state }) {
     commit('INITIALIZE_GAME_CHANNEL');
@@ -184,18 +177,4 @@ const showErrorMessageOnSocketTimeout = function() {
   window.alert(
     `Sorry, the connection to our server timed out. You may want to wait and try again. If the error persists, do not proceed with the HIT. Thank you for your understanding. `
   );
-};
-
-/* For generating random participant IDs */
-// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-// generateId :: Integer -> String
-const generateId = function(len) {
-  // dec2hex :: Integer -> String
-  const dec2hex = function(dec) {
-    return ('0' + dec.toString(16)).substr(-2);
-  };
-
-  let arr = new Uint8Array((len || 40) / 2);
-  window.crypto.getRandomValues(arr);
-  return Array.from(arr, dec2hex).join('');
 };

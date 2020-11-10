@@ -8,7 +8,7 @@
 
 <script>
 import Screen from './Screen';
-import { mapActions } from 'vuex';
+import { initializeExperiment } from '@/socket.js';
 
 export default {
   name: 'InteractiveWelcome',
@@ -22,10 +22,8 @@ export default {
     }
   },
   mounted() {
-    this.initializeExperiment();
+    initializeExperiment();
   },
-  methods: {
-    ...mapActions('interactiveExperiment', ['initializeExperiment'])
-  }
+  methods: {}
 };
 </script>
