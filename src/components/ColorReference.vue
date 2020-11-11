@@ -138,6 +138,7 @@ export default {
   justify-content: space-around;
   text-align: center;
   flex-wrap: nowrap;
+  margin: 0 auto;
 }
 
 .color-div {
