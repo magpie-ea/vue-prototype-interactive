@@ -4,7 +4,7 @@
 
 <script>
 import Screen from './Screen';
-import { mapActions } from 'vuex';
+import { joinLobby } from '@/socket.js';
 
 export default {
   name: 'Lobby',
@@ -29,11 +29,9 @@ export default {
     }
   },
   mounted() {
-    this.joinLobby();
+    joinLobby();
   },
-  methods: {
-    ...mapActions('interactiveExperiment', ['joinLobby'])
-  }
+  methods: {}
 };
 </script>
 

@@ -39,7 +39,13 @@
 <script>
 import colorReferenceUtils from '../colorReferenceUtils';
 import Screen from './Screen';
-import { mapActions } from 'vuex';
+import {
+  variant,
+  // broadcastInitializeGameEvent,
+  broadcastNewMessageEvent
+  // broadcastNextRoundEvent,
+  // broadcastEndGameEvent
+} from '@/socket.js';
 
 export default {
   name: 'ColorReference',
@@ -57,19 +63,14 @@ export default {
       this.title = newMessage.message;
     }
   },
-  mounted() {
-    this.setUpSubscriptionsToUpdates();
-  },
+  mounted() {},
   methods: {
     fillColor: function(div, color, type) {
       div.classList.remove(['target', 'distractor1', 'distractor2']);
 
       div.classList.add(type);
 
-      if (
-        type == 'target' &&
-        this.$store.state.interactiveExperiment.variant == 1
-      ) {
+      if (type == 'target' && variant == 1) {
         div.classList.add('speaker-target');
       }
 
@@ -79,13 +80,10 @@ export default {
 
       div.dataset.type = type;
     },
-    ...mapActions('interactiveExperiment', [
-      'broadcastInitializeGameEvent',
-      'broadcastNewMessageEvent',
-      'broadcastNextRoundEvent',
-      'broadcastEndGameEvent',
-      'setUpSubscriptionsToUpdates'
-    ])
+    // broadcastInitializeGameEvent: broadcastNewMessageEvent,
+    broadcastNewMessageEvent: broadcastNewMessageEvent
+    // broadcastNextRoundEvent: broadcastNewMessageEvent,
+    // broadcastEndGameEvent: broadcastNewMessageEvent
   }
 };
 </script>

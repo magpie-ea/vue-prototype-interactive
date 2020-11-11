@@ -31,11 +31,11 @@ const generateId = function(len) {
   return Array.from(arr, dec2hex).join('');
 };
 
-let variant = null;
-let chain = null;
-let realization = null;
+export let variant = null;
+export let chain = null;
+export let realization = null;
 let participantChannel = null;
-// let gameChannel = null;
+let gameChannel = null;
 const socketURL = config.socketURL;
 // const socketURL = 'ws://localhost:4000/socket';
 const participantID = generateId(40);
@@ -83,4 +83,76 @@ export function initializeExperiment() {
     .receive('timeout', () => {
       showErrorMessageOnSocketTimeout();
     });
+}
+
+export function joinLobby() {
+  gameChannel = experimentSocket.channel(
+    `interactive_room:${experimentID}:${chain}:${realization}`,
+    { participant_id: participantID }
+  );
+
+  gameChannel
+    .join()
+    .receive('ok', () => {
+      store.commit('interactiveExperiment/SET_WAITING_IN_LOBBY', null, {
+        root: true
+      });
+    })
+    .receive('error', reasons => {
+      showErrorMessageOnSocketError(reasons);
+    })
+    .receive('timeout', () => {
+      showErrorMessageOnSocketTimeout();
+    });
+
+  gameChannel.on('start_game', () => {
+    store.commit('interactiveExperiment/SET_GAME_START', null, {
+      root: true
+    });
+  });
+
+  setUpSubscriptionsToUpdates();
+}
+
+// export function broadcastEventToChannel(event, payload) {
+//   gameChannel.push(event, payload);
+// }
+
+function setUpSubscriptionsToUpdates() {
+  gameChannel.on('initialize_game', payload => {
+    store.commit('interactiveExperiment/SET_INITIALIZE_GAME_UPDATE', payload, {
+      root: true
+    });
+  });
+  gameChannel.on('new_msg', payload => {
+    store.commit('interactiveExperiment/SET_NEW_MESSAGE_UPDATE', payload, {
+      root: true
+    });
+  });
+  gameChannel.on('next_round', payload => {
+    store.commit('interactiveExperiment/SET_NEXT_ROUND_UPDATE', payload, {
+      root: true
+    });
+  });
+  gameChannel.on('end_game', payload => {
+    store.commit('interactiveExperiment/SET_END_GAME_UPDATE', payload, {
+      root: true
+    });
+  });
+}
+
+export function broadcastInitializeGameEvent(payload) {
+  gameChannel.push('initialize_game', payload);
+}
+
+export function broadcastNewMessageEvent(payload) {
+  gameChannel.push('new_msg', payload);
+}
+
+export function broadcastNextRoundEvent(payload) {
+  gameChannel.push('next_round', payload);
+}
+
+export function broadcastEndGameEvent(payload) {
+  gameChannel.push('end_game', payload);
 }
