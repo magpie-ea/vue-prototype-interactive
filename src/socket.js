@@ -111,31 +111,31 @@ export function joinLobby() {
     });
   });
 
-  setUpSubscriptionsToUpdates();
+  setUpSubscriptionsToPayloads();
 }
 
 // export function broadcastEventToChannel(event, payload) {
 //   gameChannel.push(event, payload);
 // }
 
-function setUpSubscriptionsToUpdates() {
+function setUpSubscriptionsToPayloads() {
   gameChannel.on('initialize_game', payload => {
-    store.commit('interactiveExperiment/SET_INITIALIZE_GAME_UPDATE', payload, {
+    store.commit('interactiveExperiment/SET_INITIALIZE_GAME_PAYLOAD', payload, {
       root: true
     });
   });
   gameChannel.on('new_msg', payload => {
-    store.commit('interactiveExperiment/SET_NEW_MESSAGE_UPDATE', payload, {
+    store.commit('interactiveExperiment/SET_NEW_MESSAGE_PAYLOAD', payload, {
       root: true
     });
   });
   gameChannel.on('next_round', payload => {
-    store.commit('interactiveExperiment/SET_NEXT_ROUND_UPDATE', payload, {
+    store.commit('interactiveExperiment/SET_NEXT_ROUND_PAYLOAD', payload, {
       root: true
     });
   });
   gameChannel.on('end_game', payload => {
-    store.commit('interactiveExperiment/SET_END_GAME_UPDATE', payload, {
+    store.commit('interactiveExperiment/SET_END_GAME_PAYLOAD', payload, {
       root: true
     });
   });

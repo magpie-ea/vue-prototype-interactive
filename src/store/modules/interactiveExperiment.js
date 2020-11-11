@@ -11,10 +11,10 @@ export const state = {
   waitingInLobby: false,
   gameStarted: false,
   gameFinished: false,
-  newMessageUpdate: null,
-  initializeGameUpdate: null,
-  nextRoundUpdate: null,
-  endGameUpdate: null
+  newMessagePayload: null,
+  initializeGamePayload: null,
+  nextRoundPayload: null,
+  endGamePayload: null
 };
 
 export const mutations = {
@@ -30,17 +30,17 @@ export const mutations = {
   BROADCAST_EVENT_TO_CHANNEL(state, { event, payload }) {
     state.gameChannel.push(event, payload);
   },
-  SET_INITIALIZE_GAME_UPDATE(state, payload) {
-    state.initializeGameUpdate = payload;
+  SET_INITIALIZE_GAME_PAYLOAD(state, payload) {
+    state.initializeGamePayload = payload;
   },
-  SET_NEW_MESSAGE_UPDATE(state, payload) {
-    state.newMessageUpdate = payload;
+  SET_NEW_MESSAGE_PAYLOAD(state, payload) {
+    state.newMessagePayload = payload;
   },
-  SET_NEXT_ROUND_UPDATE(state, payload) {
-    state.nextRoundUpdate = payload;
+  SET_NEXT_ROUND_PAYLOAD(state, payload) {
+    state.nextRoundPayload = payload;
   },
-  SET_END_GAME_UPDATE(state, payload) {
-    state.endGameUpdate = payload;
+  SET_END_GAME_PAYLOAD(state, payload) {
+    state.endGamePayload = payload;
   }
 };
 

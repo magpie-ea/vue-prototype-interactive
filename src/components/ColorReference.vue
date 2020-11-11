@@ -1,7 +1,6 @@
 <template>
   <Screen :title="title">
     <template #0="{ nextSlide }">
-      <!-- @slot provide a preparation stimulus, i.e. a text or an audio explanation-->
       <div class="magpie-view">
         <section class="magpie-text-container">
           <p id="game-instructions" class="magpie-view-text"></p>
@@ -54,14 +53,14 @@ export default {
     };
   },
   watch: {
-    '$store.state.interactiveExperiment.newMessageUpdate': function(payload) {
+    '$store.state.interactiveExperiment.newMessagePayload': function(payload) {
       let chatBox = document.querySelector('#chat-box');
       let msgBlock = document.createElement('p');
       msgBlock.classList.add('magpie-view-text');
       msgBlock.insertAdjacentHTML('beforeend', `${payload.message}`);
       chatBox.appendChild(msgBlock);
     },
-    '$store.state.interactiveExperiment.initializeGameUpdate': function(
+    '$store.state.interactiveExperiment.initializeGamePayload': function(
       payload
     ) {
       this.setUpOneRound(payload.colors);
