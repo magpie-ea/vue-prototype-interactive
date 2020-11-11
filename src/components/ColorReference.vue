@@ -81,12 +81,8 @@ export default {
     },
     broadcastMsg() {
       const msg = document.querySelector('#participant-msg').value;
-      this.broadcastNewMessageEvent({ message: msg });
-    },
-    // broadcastInitializeGameEvent: broadcastNewMessageEvent,
-    broadcastNewMessageEvent: broadcastNewMessageEvent
-    // broadcastNextRoundEvent: broadcastNewMessageEvent,
-    // broadcastEndGameEvent: broadcastNewMessageEvent
+      broadcastNewMessageEvent({ message: msg });
+    }
   }
 };
 </script>
