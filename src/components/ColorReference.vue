@@ -82,7 +82,12 @@ export default {
       broadcastNewMessageEvent({ message: msg });
     },
     fillColor(div, color, type) {
-      div.classList.remove(['target', 'distractor1', 'distractor2']);
+      div.classList.remove(
+        'target',
+        'firstDistractor',
+        'secondDistractor',
+        'speaker-target'
+      );
 
       div.classList.add(type);
 
@@ -138,7 +143,6 @@ export default {
   justify-content: space-around;
   text-align: center;
   flex-wrap: nowrap;
-  margin: 0 auto;
 }
 
 .color-div {
@@ -153,5 +157,6 @@ export default {
 
 .color-container {
   width: 400px;
+  margin: 0 auto;
 }
 </style>
