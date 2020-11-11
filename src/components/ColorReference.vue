@@ -38,8 +38,8 @@ import Screen from './Screen';
 import {
   variant,
   broadcastInitializeGameEvent,
-  broadcastNewMessageEvent
-  // broadcastNextRoundEvent,
+  broadcastNewMessageEvent,
+  broadcastNextRoundEvent
   // broadcastEndGameEvent
 } from '@/socket.js';
 
@@ -63,6 +63,9 @@ export default {
     '$store.state.interactiveExperiment.initializeGamePayload': function(
       payload
     ) {
+      this.setUpOneRound(payload.colors);
+    },
+    '$store.state.interactiveExperiment.nextRoundPayload': function(payload) {
       this.setUpOneRound(payload.colors);
     }
   },
@@ -115,6 +118,9 @@ export default {
             let selectedColor = div.style['background-color'];
             broadcastNewMessageEvent({
               message: 'type: ' + selectedType + ' color: ' + selectedColor
+            });
+            broadcastNextRoundEvent({
+              colors: colorReferenceUtils.sampleColors()
             });
           };
         }
