@@ -17,10 +17,7 @@
             placeholder="Type your message to the other participant here."
             id="participant-msg"
           ></textarea>
-          <button
-            class="magpie-view-button"
-            @click.stop="broadcastNewMessageEvent({ message: 'test' })"
-          >
+          <button class="magpie-view-button" @click.stop="broadcastMsg()">
             Send
           </button>
         </div>
@@ -57,10 +54,12 @@ export default {
     };
   },
   watch: {
-    '$store.state.interactiveExperiment.newMessageUpdate': function(
-      newMessage
-    ) {
-      this.title = newMessage.message;
+    '$store.state.interactiveExperiment.newMessageUpdate': function(payload) {
+      let chatBox = document.querySelector('#chat-box');
+      let msgBlock = document.createElement('p');
+      msgBlock.classList.add('magpie-view-text');
+      msgBlock.insertAdjacentHTML('beforeend', `${payload.message}`);
+      chatBox.appendChild(msgBlock);
     }
   },
   mounted() {},
@@ -79,6 +78,10 @@ export default {
       );
 
       div.dataset.type = type;
+    },
+    broadcastMsg() {
+      const msg = document.querySelector('#participant-msg').value;
+      this.broadcastNewMessageEvent({ message: msg });
     },
     // broadcastInitializeGameEvent: broadcastNewMessageEvent,
     broadcastNewMessageEvent: broadcastNewMessageEvent
