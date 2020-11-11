@@ -5,9 +5,8 @@ export default {
   randomColor: function(options) {
     var h = ~~(Math.random() * 360);
     var s = ~~(Math.random() * 100);
-    var l = options.prototype.hasOwnProperty.call(options, 'fixedL')
-      ? 50
-      : ~~(Math.random() * 100);
+    var l = options.fixedL ? 50 : ~~(Math.random() * 100);
+    // var l = 50;
     return [h, s, l];
   },
 

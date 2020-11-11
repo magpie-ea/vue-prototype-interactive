@@ -38,7 +38,7 @@ import colorReferenceUtils from '../colorReferenceUtils';
 import Screen from './Screen';
 import {
   variant,
-  // broadcastInitializeGameEvent,
+  broadcastInitializeGameEvent,
   broadcastNewMessageEvent
   // broadcastNextRoundEvent,
   // broadcastEndGameEvent
@@ -60,11 +60,26 @@ export default {
       msgBlock.classList.add('magpie-view-text');
       msgBlock.insertAdjacentHTML('beforeend', `${payload.message}`);
       chatBox.appendChild(msgBlock);
+    },
+    '$store.state.interactiveExperiment.initializeGameUpdate': function(
+      payload
+    ) {
+      this.setUpOneRound(payload.colors);
     }
   },
-  mounted() {},
+  mounted() {
+    if (variant == 2) {
+      broadcastInitializeGameEvent({
+        colors: colorReferenceUtils.sampleColors()
+      });
+    }
+  },
   methods: {
-    fillColor: function(div, color, type) {
+    broadcastMsg() {
+      const msg = document.querySelector('#participant-msg').value;
+      broadcastNewMessageEvent({ message: msg });
+    },
+    fillColor(div, color, type) {
       div.classList.remove(['target', 'distractor1', 'distractor2']);
 
       div.classList.add(type);
@@ -79,12 +94,58 @@ export default {
 
       div.dataset.type = type;
     },
-    broadcastMsg() {
-      const msg = document.querySelector('#participant-msg').value;
-      broadcastNewMessageEvent({ message: msg });
+    setUpOneRound(colors) {
+      // Seems that we just have to store them globally somewhere.
+      let indices = [0, 1, 2];
+      colorReferenceUtils.shuffleArray(indices);
+
+      let color_divs = document.getElementsByClassName('color-div');
+      let count = 0;
+      // var pos = {};
+      for (let [type, color] of Object.entries(colors)) {
+        this.fillColor(color_divs[indices[count]], color, type);
+        // pos[type] = indices[count];
+        count += 1;
+      }
+
+      // Only the listener can select a response apparently.
+      if (variant == 2) {
+        for (let div of color_divs) {
+          div.onclick = () => {
+            let selectedType = div.dataset.type;
+            let selectedColor = div.style['background-color'];
+            broadcastNewMessageEvent({
+              message: 'type: ' + selectedType + ' color: ' + selectedColor
+            });
+          };
+        }
+      }
     }
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.color-div-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+  text-align: center;
+  flex-wrap: nowrap;
+}
+
+.color-div {
+  height: 150px;
+  flex: 1;
+  margin: 5px;
+}
+
+.speaker-target {
+  border: 5px solid black;
+}
+
+.color-container {
+  width: 400px;
+}
+</style>
